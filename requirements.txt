@@ -2,3 +2,4 @@
 spotipy
 python-decouple
 PyQt6
+pyperclip
