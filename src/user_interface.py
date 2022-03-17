@@ -104,17 +104,8 @@ class Client(QMainWindow):
             self.progress_timer.start()
         playback_bar.setValue(current_playback['progress_ms']/1000)
         
-        
-        cover_dimension = int(config('ALBUM_COVER_SIZE'))
-        data = urllib.request.urlopen(get_image_url(current_playback['item']['album']['images'],cover_dimension)).read()
-        loaded_image = QPixmap()
-        loaded_image.loadFromData(data)
-        
-        self.album_cover_container = QLabel(self)
-        self.album_cover_container.setPixmap(loaded_image)
-        self.album_cover_container.setGeometry(cover_dimension, cover_dimension, cover_dimension, cover_dimension)
-        
-       
+        self.update_cover_image(current_playback)
+         
         self.centralWidget().layout().addWidget(copy_roomcode_button, 0, 0)
         self.centralWidget().layout().addWidget(leave_button, 0, 2)
         self.centralWidget().layout().addWidget(pausePlay_button, 3, 0)
@@ -130,10 +121,19 @@ class Client(QMainWindow):
             self.update_cover_image()
             bar.setValue(0)  
             
-    def update_cover_image(self):
+    def update_cover_image(self, current_playback=None) -> None:
         if not self.album_cover_container:
             pass
-        
+        if not current_playback:
+            current_playback = self.api_handler.get_playback()
+        cover_dimension = int(config('ALBUM_COVER_SIZE'))
+        data = urllib.request.urlopen(get_image_url(current_playback['item']['album']['images'],cover_dimension)).read()
+        loaded_image = QPixmap()
+        loaded_image.loadFromData(data)
+        if not self.album_cover_container:
+            self.album_cover_container = QLabel(self)
+        self.album_cover_container.setPixmap(loaded_image)
+        self.album_cover_container.setGeometry(cover_dimension, cover_dimension, cover_dimension, cover_dimension)
         
          
     ### Button Methods
