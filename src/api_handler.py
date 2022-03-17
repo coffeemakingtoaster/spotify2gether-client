@@ -13,6 +13,7 @@ class ApiHandler():
         self.user = None
         self.is_playing = True
         self.device = None
+        
     
     def start_auth_flow(self):
         self.logger.debug("Instancitaing spotipy")
@@ -20,6 +21,9 @@ class ApiHandler():
         auth_manager = SpotifyPKCE(client_id=config("CLIENT_ID"), scope=config("AUTH_SCOPE"), state=generate_random_string(16), redirect_uri=config("AUTH_REDIRECT_URI") )
         self.spotipy = spotipy.Spotify(client_credentials_manager=auth_manager)
         self.logger.debug("Successfully authorized account")
+        self.user = self.spotipy.me()
+        self.logger.debug(f'User: {self.user}')
+        
     
     def refresh_devices(self):
         self.logger.debug(f'Getting devices')
@@ -41,3 +45,11 @@ class ApiHandler():
         self.is_playing = not self.is_playing
         self.logger.debug(f'Playback state changed to {self.is_playing}')
         return self.is_playing
+    
+    
+    def get_playback(self):
+        playback = self.spotipy.currently_playing()
+        if not playback:
+            self.logger.error('Cannot get playback. This might be due to spotify being in a private session')
+        self.is_playing = playback['is_playing']
+        return playback

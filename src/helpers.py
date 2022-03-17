@@ -3,6 +3,7 @@ from random import SystemRandom
 from string import ascii_letters, digits
 from PyQt6.QtWidgets import QLabel
 from pyperclip import copy
+from typing import List, Dict
 
 # Local
 from room import Room
@@ -37,3 +38,15 @@ def get_dummy_room() -> Room:
 def copy_to_clipboard(value: str) -> None:
     copy(value)
     
+# Return first by default    
+def get_image_url(image_list: List[Dict], width: int, height= None) -> str:
+    print(image_list[0])
+    if len(list(image_list)) == 0:
+        raise Exception("Invalid image list length")
+    # Reduce params for square images
+    if not height:
+        height = width
+    for image in image_list:
+        if image['height'] == height and image['width'] == width:
+            return image['url']
+    return image_list[0]['url']
