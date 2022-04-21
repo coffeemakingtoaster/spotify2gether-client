@@ -31,7 +31,8 @@ def validate_roomcode(code: str) -> bool:
         
 def get_dummy_room() -> Room:
     room = Room(name='Dummy Room', description='Dummy Room Description', roomcode='000DUMMY')
-    print(room.roomcode)
+    room.current_song = 'spotify:track:1BSMpVGWs3v5BZKnAQziAc'
+    room.queue = ['spotify:track:4pJzUvwU5ufYr8rLdQ6aYK']
     return room
     
     

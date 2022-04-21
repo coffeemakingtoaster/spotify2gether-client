@@ -3,9 +3,11 @@ import spotipy
 from spotipy.oauth2 import SpotifyPKCE
 from decouple import config
 from coffeelog import BaseLogger
+from typing import Dict
 
 # Local
 from helpers import generate_random_string
+from room import Room
 
 class ApiHandler():
     def __init__(self) -> None:
@@ -53,3 +55,15 @@ class ApiHandler():
             self.logger.error('Cannot get playback. This might be due to spotify being in a private session')
         self.is_playing = playback['is_playing']
         return playback
+    
+    
+    def prepare_for_room(self, room: Room) -> None:
+        self.spotipy.start_playback(device_id=self.device, uris=[room.current_song], position_ms=room.current_offset)
+        pass
+    
+    def skip_song(self, track) -> None:
+        self.spotipy.start_playback(device_id=self.device, uris=[track], position_ms=0)
+        
+    def get_song_info(self, track) -> Dict:
+        print(self.spotipy.track(track))
+        return self.spotipy.track(track)
